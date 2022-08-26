@@ -75,4 +75,19 @@ server.post('/tweets', (req, res) => {
   }
 });
 
+server.get('/tweets/:USERNAME', (req, res) => {
+  const arrayUser = [];
+  const USERNAME = req.params.USERNAME;
+  for (let i = 0, len = tweetBank.length; i < len; i++) {
+    console.log(tweetBank[i].username);
+    if (tweetBank[i].username === USERNAME) {
+      arrayUser.push(tweetBank[i]);
+    }
+    if (i === len - 1 && arrayUser[0] === undefined) {
+      return res.status(400).send('Informe uma página válida!');
+    }
+  }
+  res.status(200).send(arrayUser.reverse());
+});
+
 server.listen(5000, () => console.log('Listening on port 5000'));
