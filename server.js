@@ -20,17 +20,33 @@ server.get('/tweets', (req, res) => {
   if (end >= 10) {
     start = end - 10;
   }
-  res.send(tweetBank.slice(start, end).reverse());
+  return res.status(200).send(tweetBank.slice(start, end).reverse());
 });
 
 //Logs user
 server.post('/sign-up', (req, res) => {
+  if (!req.body.username || !req.body.avatar) {
+    return res.status(400).send('Todos os campos são obrigatórios!');
+  }
+
+  function isImage(url) {
+    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+  }
+
+  if (!isImage(req.body.avatar)) {
+    return res
+      .status(400)
+      .send(
+        'Imagem inválida, formatos aceitos são: .jpg, .jpeg, .png, .webp, .avif, .gif ou .svg'
+      );
+  }
+
   loggedUser = {
     username: req.body.username,
     avatar: req.body.avatar,
   };
   handleUser();
-  res.send('user logged');
+  return res.status(201).send('OK');
 });
 
 //updates same user avatar when updated
@@ -47,12 +63,16 @@ function handleUser() {
 
 //posts new tweet
 server.post('/tweets', (req, res) => {
-  tweetBank.push({
-    username: loggedUser.username,
-    avatar: loggedUser.avatar,
-    tweet: req.body.tweet,
-  });
-  res.send('posted tweet');
+  if (!req.body.tweet) {
+    return res.status(400).send('Todos os campos são obrigatórios!');
+  } else {
+    tweetBank.push({
+      username: loggedUser.username,
+      avatar: loggedUser.avatar,
+      tweet: req.body.tweet,
+    });
+    return res.status(201).send('OK');
+  }
 });
 
 server.listen(5000, () => console.log('Listening on port 5000'));
