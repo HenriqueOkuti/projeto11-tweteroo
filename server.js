@@ -30,15 +30,19 @@ server.post('/sign-up', (req, res) => {
   }
 
   function isImage(url) {
-    return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+    //return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url); //REGEX case
+    return Boolean(new URL(url)); //Web API case
   }
 
   if (!isImage(req.body.avatar)) {
-    return res
-      .status(400)
-      .send(
-        'Imagem inválida, formatos aceitos são: .jpg, .jpeg, .png, .webp, .avif, .gif ou .svg'
-      );
+    return (
+      res
+        .status(400)
+        // .send(
+        //   'Imagem inválida, formatos aceitos são: .jpg, .jpeg, .png, .webp, .avif, .gif ou .svg'
+        // );
+        .send('Imagem inválida')
+    );
   }
 
   loggedUser = {
